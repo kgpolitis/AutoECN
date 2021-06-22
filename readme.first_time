@@ -1,0 +1,30 @@
+
+Please run the following command:
+
+./install_autoECN
+
+in order to start the automatic log in script
+
+After using this once you don't have to do
+
+anything else. The log in works once per minute
+
+If you don't want to use it anymore 
+
+./unistall_autoECN
+
+NOTE: For both commands open a terminal and 
+move to the autoECN folder. Type them there    
+
+NOTE: Make sure the scripts are executable:
+
+chmod u+x auto_login_ECN install_autoECN uninstall_autoECN
+
+this make the scripts executable by you
+
+NOTE:If you want a message to appear use the following in the terminal
+at the folder of autoECN
+
+./notify_me
+
+You have to wait a bit.. but the message will appear

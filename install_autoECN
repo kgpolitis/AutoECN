@@ -1,0 +1,88 @@
+#!/bin/bash
+# This script checks if everything is ok to use
+# autoECN and defines a first time run
+# after that you do not need to do anything
+echo 
+echo ">              AutoECN              <"
+echo ">                v1.0               <"
+echo 
+echo 
+echo ">1< Checking Requirements:"
+iamat=`pwd`
+which lynx
+if [ $? = 1 ]; then
+  echo ">1< Could not find Lynx"
+  echo ">1< Care to install it ? (y, n)"
+  read ans
+  if [ $ans = "y" ]; then
+    echo ">1< Admin is required... using apt-get"
+    sudo apt-get install lynx
+  else
+    echo ">1< Without lynx the script won't work"
+    echo ">1< Bye"
+  fi
+else
+  echo ">1< Lynx Found"
+fi
+which notify-send
+if [ $? = 1 ]; then
+  echo ">1< Could not find notify-osd"
+  echo ">1< Care to install it ? (y, n)"
+  read ans
+  if [ $ans = "y" ]; then
+    echo ">1< Admin is required... using apt-get"
+    sudo apt-get install libnotify-bin
+  else
+    echo ">1< Without notify-osd the script won't work "
+    echo ">1< Bye"
+  fi
+else
+  echo ">1< notify-send found"
+fi
+echo 
+echo ">2< Keystroke file 4 lynx"
+echo ">2< Your ECN username ? "
+read ECNusername
+echo ">2< Your ECN password ? "
+read ECNpassword
+##############  Keystrokes file for Lynx ################
+echo key y > "$iamat"/.autokstrk.log
+echo \key y >> "$iamat"/.autokstrk.log
+echo \key Down Arrow  >> "$iamat"/.autokstrk.log
+echo
+var=$ECNusername
+for i in $(seq 1 ${#var}); do 
+  echo \key ${var:$(expr $i - 1):1} >> "$iamat"/.autokstrk.log
+done
+echo \key "<tab>" >> "$iamat"/.autokstrk.log
+var=$ECNpassword
+for i in $(seq 1 ${#var}); do 
+  echo \key ${var:$(expr $i - 1):1} >> "$iamat"/.autokstrk.log
+done
+echo \key Down Arrow >> "$iamat"/.autokstrk.log
+echo \key ^J >> "$iamat"/.autokstrk.log
+echo -n "key y" >> "$iamat"/.autokstrk.log
+#########################################################
+chmod go-rw "$iamat"/.autokstrk.log 
+echo
+echo ">3< I will create a .crontab file"
+echo "# m h  dom mon dow   command" > "$iamat"/.crontab
+#echo "* * * * * "$iamat"/ECNlogger $iamat > "$iamat"/.all.log" >> "$iamat"/.crontab 
+echo "* * * * * "$iamat"/ECNlogger $iamat" >> "$iamat"/.crontab 
+crontab "$iamat"/.crontab
+chmod go-w "$iamat"/.crontab 
+chmod u+x "$iamat"/ECNlogger
+crontab -l
+if [ $? = 1 ]; then
+  echo ">3< crontab file creation failed ???"
+ else
+  echo ">3< crontab file was successfully created"
+fi
+echo 
+echo ">4< Please note that the ECNlogger script will automatically start "
+echo ">4< every minute. Change cron timings if you wish another setup "
+echo ">4< Note also that you are not required to do anything else !!  "
+echo 
+echo ">>> Finished"
+
+exit 0

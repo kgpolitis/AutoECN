@@ -1,0 +1,11 @@
+#!/bin/bash
+# this script undoes the changes that install did
+crontab -r
+rm note_status .autokstrk.log 
+if [ -f note_status~ ]; then
+  rm note_status~
+fi
+if [ -f .autokstrk.log~ ]; then
+  rm .autokstrk.log~
+fi
+rm .crontab

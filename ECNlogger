@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [ -f "$1"/note_status ]; then
+    
+    notify_status=`cat "$1"/note_status` 
+   
+else
+   
+    notify_status="up"
+    DISPLAY=:0.0 notify-send autoECN " Welcome to autoECN " -i notification-network-wireless-none
+   
+fi
+
+ping -c 1 google.com | grep "errors"
+int_ans=$?
+
+echo $int_ans
+if  [[ $int_ans -eq 1 && $notify_status = "up" ]] ; then
+    DISPLAY=:0.0 notify-send autoECN " Already connected to the internet " -i notification-network-wireless-full
+   
+    echo down > "$1"/note_status    
+    
+elif [[ $int_ans -eq 0 ]]; then
+   
+    ping -c 1 controller.ec-nantes.fr
+   
+    if [ $? = 0 ]; then
+     
+      DISPLAY=:0.0 notify-send autoECN " Connecting to ECN " -i notification-network-wireless-medium
+      
+      lynx controller.ec-nantes.fr -accept_all_cookies -cmd_script="$1"/.autokstrk.log
+      
+      echo up > "$1"/note_status
+      
+      DISPLAY=:0.0 notify-send autoECN " Connected to ECN " -i notification-network-wireless-high
+     
+    else
+     
+      echo down > "$1"/note_status
+     
+    fi
+fi
